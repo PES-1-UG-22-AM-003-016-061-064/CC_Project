@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const ProfileSchema = new mongoose.Schema(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,  // Use ObjectId to reference the user's MongoDB ID
+      type: mongoose.Schema.Types.ObjectId,  // Reference to the user's MongoDB ID
       ref: 'User',  // Reference to the User model (auth service)
       required: true,
       unique: true, // Ensures one profile per user
     },
     role: {
       type: String,
-      enum: ['student', 'parent', 'professor'],
+      enum: ['student', 'parent'], // Matched with auth service roles
       required: true,
     },
     name: {
@@ -27,10 +27,6 @@ const ProfileSchema = new mongoose.Schema(
     rollNumber: String,
     department: String,
     year: Number,
-
-    // Professor-specific
-    designation: String,
-    subjects: [String],
 
     // Parent-specific
     studentId: String,

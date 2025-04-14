@@ -22,7 +22,7 @@ router.get('/me', authenticateUser, async (req, res) => {
 // PUT /profile/me - Update current user's profile
 router.put('/me', authenticateUser, async (req, res) => {
   try {
-    const { name, email, phone, rollNumber, department, year, designation, subjects, studentId } = req.body;
+    const { name, email, phone, rollNumber, department, year, studentId } = req.body;
 
     // Validate the request body
     if (!name || !email) {
@@ -36,23 +36,15 @@ router.put('/me', authenticateUser, async (req, res) => {
     }
 
     // Update fields based on role
+    profile.name = name || profile.name;
+    profile.email = email || profile.email;
+    profile.phone = phone || profile.phone;
+
     if (profile.role === 'student') {
-      profile.name = name || profile.name;
-      profile.email = email || profile.email;
-      profile.phone = phone || profile.phone;
       profile.rollNumber = rollNumber || profile.rollNumber;
       profile.department = department || profile.department;
       profile.year = year || profile.year;
-    } else if (profile.role === 'professor') {
-      profile.name = name || profile.name;
-      profile.email = email || profile.email;
-      profile.phone = phone || profile.phone;
-      profile.designation = designation || profile.designation;
-      profile.subjects = subjects || profile.subjects;
     } else if (profile.role === 'parent') {
-      profile.name = name || profile.name;
-      profile.email = email || profile.email;
-      profile.phone = phone || profile.phone;
       profile.studentId = studentId || profile.studentId;
     }
 
@@ -60,6 +52,36 @@ router.put('/me', authenticateUser, async (req, res) => {
     await profile.save();
 
     return res.status(200).json({ message: 'Profile updated successfully', profile });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// New route - Create a profile (useful after registration)
+router.post('/', authenticateUser, async (req, res) => {
+  try {
+    const { name, email, phone, role, rollNumber, department, year, studentId } = req.body;
+
+    // Check if profile already exists
+    const existingProfile = await Profile.findOne({ userId: req.user._id });
+    if (existingProfile) {
+      return res.status(400).json({ message: 'Profile already exists for this user' });
+    }
+
+    // Create new profile
+    const profile = new Profile({
+      userId: req.user._id,
+      role: role || req.user.role, // Use role from token if not specified
+      name,
+      email,
+      phone,
+      ...(role === 'student' ? { rollNumber, department, year } : {}),
+      ...(role === 'parent' ? { studentId } : {})
+    });
+
+    await profile.save();
+    return res.status(201).json({ message: 'Profile created successfully', profile });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error' });
