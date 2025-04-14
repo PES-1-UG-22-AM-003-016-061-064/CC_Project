@@ -12,7 +12,11 @@ const authenticateUser = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded; // e.g., { userId, role, email, etc. }
+    req.user = decoded; // e.g., { _id: userId, role, email, etc. }
+    
+    // Optionally, you can log the decoded token or specific values here for debugging
+    // console.log(decoded);
+    
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired token' });

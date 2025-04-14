@@ -3,9 +3,10 @@ const mongoose = require('mongoose');
 const ProfileSchema = new mongoose.Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,  // Use ObjectId to reference the user's MongoDB ID
+      ref: 'User',  // Reference to the User model (auth service)
       required: true,
-      unique: true, // Links to Auth service user ID
+      unique: true, // Ensures one profile per user
     },
     role: {
       type: String,

@@ -7,7 +7,7 @@ const router = express.Router();
 // GET /profile/me - Get current user's profile
 router.get('/me', authenticateUser, async (req, res) => {
   try {
-    const profile = await Profile.findOne({ userId: req.user.userId });
+    const profile = await Profile.findOne({ userId: req.user._id });
     if (!profile) {
       return res.status(404).json({ message: 'Profile not found' });
     }
@@ -24,8 +24,13 @@ router.put('/me', authenticateUser, async (req, res) => {
   try {
     const { name, email, phone, rollNumber, department, year, designation, subjects, studentId } = req.body;
 
+    // Validate the request body
+    if (!name || !email) {
+      return res.status(400).json({ message: 'Name and email are required' });
+    }
+
     // Find the existing profile
-    const profile = await Profile.findOne({ userId: req.user.userId });
+    const profile = await Profile.findOne({ userId: req.user._id });
     if (!profile) {
       return res.status(404).json({ message: 'Profile not found' });
     }
