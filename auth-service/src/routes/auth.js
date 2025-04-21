@@ -28,10 +28,6 @@ router.post('/signup/student', async (req, res) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: 'Student already exists' });
 
-    // Check if email exists in external system
-    const externalEmailExists = await externalUserService.emailExists(email);
-    if (externalEmailExists) return res.status(400).json({ error: 'Email already exists in instructor/admin system' });
-
     const parent = await User.findOne({ email: parentEmail, role: 'parent' });
     if (!parent) return res.status(404).json({ error: 'Parent not found. Ask them to sign up first.' });
 
@@ -68,10 +64,6 @@ router.post('/signup/parent', async (req, res) => {
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: 'Parent already exists' });
-
-    // Check if email exists in external system
-    const externalEmailExists = await externalUserService.emailExists(email);
-    if (externalEmailExists) return res.status(400).json({ error: 'Email already exists in instructor/admin system' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
