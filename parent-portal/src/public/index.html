@@ -1,0 +1,74 @@
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Parent Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Parent Dashboard</h1>
+    <input type="text" id="tokenInput" placeholder="Enter JWT Token" />
+    <button onclick="fetchData()">Fetch Student Data</button>
+
+    <div id="dashboard" class="dashboard hidden">
+      <h2>Student Details</h2>
+      <div id="marksSection">
+        <h3>Marks</h3>
+        <ul id="marksList"></ul>
+      </div>
+      <div id="attendanceSection">
+        <h3>Attendance</h3>
+        <ul id="attendanceList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+*/}
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Parent Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Parent Dashboard</h1>
+    <input type="text" id="tokenInput" placeholder="Enter JWT Token" />
+    <button onclick="fetchData()">Fetch Student Data</button>
+
+    <div id="dashboard" class="dashboard hidden">
+      <h2>Student Details</h2>
+      <p id="studentName"></p>
+      <p id="studentEmail"></p>
+      <p id="studentId"></p>
+      
+      <div id="marksSection">
+        <h3>Marks</h3>
+        <ul id="marksList"></ul>
+      </div>
+      
+      <div id="attendanceSection">
+        <h3>Attendance</h3>
+        <ul id="attendanceList"></ul>
+      </div>
+
+      <div id="ptmSection">
+        <h3>Parent-Teacher Meetings</h3>
+        <ul id="ptmList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
