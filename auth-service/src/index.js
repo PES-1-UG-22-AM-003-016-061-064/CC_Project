@@ -15,7 +15,8 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('MongoDB Connected'))
   .catch(err => console.error(err));
 
+
 app.use('/auth', authRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 1000;
 app.listen(PORT, () => console.log(`Auth Service running on port ${PORT}`));
