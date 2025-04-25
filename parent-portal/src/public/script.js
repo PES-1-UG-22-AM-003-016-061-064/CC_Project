@@ -55,39 +55,61 @@
   }
 }
 */}
-
 async function fetchData() {
-  const token = document.getElementById('tokenInput').value.trim();
-  if (!token) {
-    alert('Please enter a valid JWT token.');
+  const email = document.getElementById('emailInput').value.trim();
+  const password = document.getElementById('passwordInput').value.trim();
+
+  if (!email || !password) {
+    alert('Please enter both email and password.');
     return;
   }
 
   try {
-    const res = await fetch('/parent/dashboard/', {
+    // Step 1: Login and get JWT token
+    const loginRes = await fetch('http://localhost:5000/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (!loginRes.ok) {
+      const errorText = await loginRes.text();
+      console.error('Login failed:', errorText);
+      throw new Error('Login failed. Please check your credentials.');
+    }
+
+    const loginData = await loginRes.json();
+    console.log('Login response:', loginData);
+
+    const token = loginData.token;
+    if (!token) {
+      throw new Error('No token received from login.');
+    }
+
+    // Step 2: Use token to fetch student data
+    const dashboardRes = await fetch('/parent/dashboard/', {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
 
-    console.log('Raw response:', res);  // Log raw response object
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error('Non-OK response body:', errorText);  // Log error response text
-      throw new Error('Failed to fetch data. Check your token.');
+    if (!dashboardRes.ok) {
+      const errorText = await dashboardRes.text();
+      console.error('Dashboard fetch failed:', errorText);
+      throw new Error('Failed to fetch dashboard data.');
     }
 
-    const responseData = await res.json();
-    console.log('Parsed JSON:', responseData);  // Log parsed JSON
+    const responseData = await dashboardRes.json();
+    console.log('Dashboard response:', responseData);
 
-    // Ensure response data is in expected format
     if (!responseData.success || !Array.isArray(responseData.data) || responseData.data.length === 0) {
-      throw new Error('No data found.');
+      throw new Error('No student data found.');
     }
 
-    const student = responseData.data[0];  // Extract the first (and only) student data
+    const student = responseData.data[0];
     const studentInfo = student.studentInfo;
 
     // Display Student Info
@@ -125,9 +147,10 @@ async function fetchData() {
 
     // Show dashboard section
     document.getElementById('dashboard').classList.remove('hidden');
+
   } catch (err) {
     console.error(err);
-    alert('Error fetching data. Check console for more info.');
+    alert(err.message || 'An error occurred while fetching data.');
   }
 }
 

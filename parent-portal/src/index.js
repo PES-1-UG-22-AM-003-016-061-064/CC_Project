@@ -24,6 +24,7 @@ mongoose.connect(process.env.MONGO_URI, {
 .catch(err => console.error('MongoDB connection error:', err));
 
 */}
+const cors = require('cors');
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -35,7 +36,11 @@ const parentRoutes = require('./routes/parentRoutes'); // Import parent routes
 // Middleware to serve static files (html, css, js)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Middleware to parse JSON in requests
+app.use(cors({
+  origin: 'http://localhost:5005', // allow requests from the frontend
+  credentials: true // if using cookies or HTTP auth
+}));
+
 app.use(express.json());
 
 // Use parent routes for the dashboard endpoint
