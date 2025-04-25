@@ -176,6 +176,37 @@ app.get('/registrations/student', authenticateUser, async (req, res) => {
   }
 });
 
+
+app.get('/student', async (req, res) => {
+  const userId = req.query.student_id;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'student_id query parameter is required' });
+  }
+
+  try {
+    const registrations = await Registration.find({ student_id: userId }).populate('course_id');
+
+    res.status(200).json({
+      student_id: userId,
+      registrations: registrations.map(reg => ({
+        id: reg._id,
+        course_id: reg.course_id?._id,
+        status: reg.status,
+        registration_date: reg.registration_date,
+        course: reg.course_id ? {
+          title: reg.course_id.title,
+          code: reg.course_id.code
+        } : null
+      }))
+    });
+  } catch (error) {
+    console.error(`Error fetching registrations for student ${userId}:`, error);
+    res.status(500).json({ error: 'Failed to fetch registrations', details: error.message });
+  }
+});
+
+
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Course Registration service listening on port ${PORT}`);
